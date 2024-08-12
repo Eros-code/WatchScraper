@@ -84,14 +84,41 @@ def html_getter_with_selenium(url):
             image_elements = driver.find_elements(By.CSS_SELECTOR, 'div.product-media img')
 
         elif "timex" in url:
-            image_elements = driver.find_elements(By.CSS_SELECTOR, 'div.product-card__image-wrapper img')
+            image_elements = driver.find_elements(By.CSS_SELECTOR, 'li.splide__slide.is-active.is-visible  div.product-card__image-wrapper img')
 
         # Collect src attributes
         image_urls = [x.get_attribute("src") for x in image_elements if x.get_attribute("src")]
-
         return soup, image_urls
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
         # Close the WebDriver
+        driver.quit()
+
+def initial_page_load(url):
+        # Set up the Selenium WebDriver (using Chrome in this example)
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')  # Run headless Chrome
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-gpu')  # Disables GPU hardware acceleration.
+    options.add_argument('--disable-software-rasterizer')  # Disables software rasterizer.
+    options.add_argument('--disable-extensions')  # Disable extensions.
+    options.add_argument('--disable-logging')  # Disable logging for performance.
+
+    driver = webdriver.Chrome(options=options)
+    try:
+        # Load the page
+        driver.get(url)
+        time.sleep(5)
+
+        print("waiting to get page ...")
+        driver.implicitly_wait(3)
+        html = driver.page_source
+        time.sleep(3)
+        # Parse the HTML with BeautifulSoup
+        soup = BeautifulSoup(html, 'html.parser')
+        driver.implicitly_wait(3)
+        return soup
+    finally:
         driver.quit()

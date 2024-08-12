@@ -6,8 +6,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from scrapedriver_package import html_getter_with_selenium
 from scrapedriver_package import html_getter
 
-citizen_url = "https://www.citizenwatch.co.uk/new-arrivals.html"
-
 def max_pages(citizen_base_url):
     citizen_html = html_getter(citizen_base_url)
     number_pages = citizen_html.find_all("a", {"class": "px-2 py-1 page"})
@@ -20,8 +18,9 @@ def max_pages(citizen_base_url):
         
     return number_pages
 
-def citizen_watches(citizen_base_url):
+def citizen_watches():
 
+    citizen_base_url = citizen_url = "https://www.citizenwatch.co.uk/new-arrivals.html"
     citizen_watches = {}
 
     for i in range(1, int(max_pages(citizen_base_url))):
@@ -45,5 +44,3 @@ def citizen_watches(citizen_base_url):
             citizen_watches[model] = {'watch_type':watch_type, 'price': price, 'url':url['href'], 'image':citizen_image}
             count += 1
     return citizen_watches
-
-print(citizen_watches(citizen_url))
